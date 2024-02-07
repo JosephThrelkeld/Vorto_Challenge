@@ -45,9 +45,10 @@ while len(sortedProbLoads) > 0:
         closestLoadIDX = -1
         for idx, load in enumerate(sortedProbLoads):
             traverseDistance = calcCartesianDistance(problemLoads[currDriverSchedule[-1] - 1].dropoffPoint, load.pickupPoint)
-            if traverseDistance < closestDist and (currDriveTime + traverseDistance + load.loadDistance + load.dropoffCenterDistance) < MAX_MINUTES:
+            if (currDriveTime + traverseDistance + load.loadDistance + load.dropoffCenterDistance) < MAX_MINUTES:
                 closestDist = traverseDistance
                 closestLoadIDX = idx
+                break
         if closestDist == sys.float_info.max:
             break
         currDriveTime += traverseDistance + sortedProbLoads[closestLoadIDX].loadDistance
