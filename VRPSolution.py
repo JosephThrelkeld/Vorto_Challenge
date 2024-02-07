@@ -1,4 +1,3 @@
-import numpy as np
 import math
 import sys
 
@@ -18,8 +17,8 @@ def loadProblem(path):
     next(f)
     for line in f:
         currLineItems = line.split()
-        currPickupPt = np.array([float(numInStr.replace('(', '').replace(')','')) for numInStr in currLineItems[1].split(',')])
-        currDropoffPt = np.array([float(numInStr.replace('(', '').replace(')','')) for numInStr in currLineItems[2].split(',')])
+        currPickupPt = [float(numInStr.replace('(', '').replace(')','')) for numInStr in currLineItems[1].split(',')]
+        currDropoffPt = [float(numInStr.replace('(', '').replace(')','')) for numInStr in currLineItems[2].split(',')]
         
         #Caluclating and storing cartesian distance b/n pickup and dropoff points for given load as it is most likely necessary to calculate all of these values anyways
         #This prevents repeating calculations for the cost of some storage
@@ -31,10 +30,11 @@ def loadProblem(path):
 def calcCartesianDistance(pt1, pt2):
     return abs(math.sqrt(pow(pt2[0] - pt1[0], 2) + pow(pt2[1] - pt1[1], 2)))
 
+
 MAX_MINUTES = 720
 #Using greedy approach to fitting drivers to loads, start off with the 
  
-driverSchedArr = []
+ 
 problemLoads = loadProblem(sys.argv[1])
 sortedProbLoads = sorted(problemLoads, key=lambda vl: vl.centerPickupDistance)
 while len(sortedProbLoads) > 0:
@@ -52,10 +52,7 @@ while len(sortedProbLoads) > 0:
             break
         currDriveTime += traverseDistance + sortedProbLoads[closestLoadIDX].loadDistance
         currDriverSchedule.append(sortedProbLoads.pop(closestLoadIDX).loadNum)
-    driverSchedArr.append(currDriverSchedule)
-
-for driverSched in driverSchedArr:
-    print("[" + ''.join([str(loadNum) + ',' for loadNum in driverSched[:-1]]) + str(driverSched[-1]) + "]")
+    print(currDriverSchedule)
     
     
         
