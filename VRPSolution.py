@@ -32,29 +32,37 @@ def calcCartesianDistance(pt1, pt2):
 
 
 MAX_MINUTES = 720
-#Using greedy approach to fitting drivers to loads, start off with the 
+
+
+
  
+#Using greedy solution, starting routes with closest pickup locations to center then adding loads with pickup locations closest to drop off of current load without going over
+#12 hrs. In this way, the algorithm simply (and naively) tries to minimize time drivers spend not completing loads
  
 problemLoads = loadProblem(sys.argv[1])
-sortedProbLoads = sorted(problemLoads, key=lambda vl: vl.centerPickupDistance)
+
+#Sorting list by closeness to center
+sortedProbLoads = sorted(problemLoads, key=lambda vl: vl.centerPickupDistance)   
+
 while len(sortedProbLoads) > 0:
     currDriveTime = sortedProbLoads[0].loadDistance + sortedProbLoads[0].centerPickupDistance
     currDriverSchedule = [sortedProbLoads.pop(0).loadNum]
     while True:
         closestDist = sys.float_info.max
         closestLoadIDX = -1
+        
         for idx, load in enumerate(sortedProbLoads):
             traverseDistance = calcCartesianDistance(problemLoads[currDriverSchedule[-1] - 1].dropoffPoint, load.pickupPoint)
-            if (currDriveTime + traverseDistance + load.loadDistance + load.dropoffCenterDistance) < MAX_MINUTES:
+            if traverseDistance < closestDist and (currDriveTime + traverseDistance + load.loadDistance + load.dropoffCenterDistance) < MAX_MINUTES:
                 closestDist = traverseDistance
                 closestLoadIDX = idx
-                break
-        if closestDist == sys.float_info.max:
+                
+        if closestLoadIDX == -1:
+            currDriveTime += problemLoads[currDriverSchedule[-1] - 1].dropoffCenterDistance
             break
-        currDriveTime += traverseDistance + sortedProbLoads[closestLoadIDX].loadDistance
+        currDriveTime += closestDist + sortedProbLoads[closestLoadIDX].loadDistance
         currDriverSchedule.append(sortedProbLoads.pop(closestLoadIDX).loadNum)
     print(currDriverSchedule)
-    
     
         
     
